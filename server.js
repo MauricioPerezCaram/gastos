@@ -1,6 +1,6 @@
-const http = require("http");
+import express from "express";
 
-const server = http.createServer();
+const server = express();
 
 const PORT = 8080;
 
