@@ -25,3 +25,4 @@ server.use(morgan("dev"));
 server.use("/", router);
 server.use(errorHandler);
 server.use(pathHandler);
+server.use(cookieParser());
