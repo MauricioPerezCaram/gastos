@@ -17,7 +17,7 @@ dishesRouter.post("/", async (req, res, next) => {
 });
 dishesRouter.get("/", async (req, res, next) => {
   try {
-    const all = await dishes.read();
+    const all = await dishes.read({});
     return res.json({
       statusCode: 200,
       response: all,

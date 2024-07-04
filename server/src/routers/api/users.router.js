@@ -17,7 +17,7 @@ usersRouter.post("/", async (req, res, next) => {
 });
 usersRouter.get("/", async (req, res, next) => {
   try {
-    const all = await users.read();
+    const all = await users.read({});
     return res.json({
       statusCode: 200,
       response: all,
