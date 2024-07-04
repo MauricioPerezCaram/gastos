@@ -1,5 +1,6 @@
 import User from "./models/user.models.js";
 import Dish from "./models/dish.models.js";
+import notFoundOne from "../../middlewares/notFoundOne.js";
 
 class MongoManager {
   constructor(model) {
@@ -13,9 +14,13 @@ class MongoManager {
       throw error;
     }
   }
-  async read() {
+  async read(obj) {
     try {
-      const all = await this.model.find();
+      let { filter, order } = obj;
+      if (!order) {
+        order = { name: 1 };
+      }
+      const all = await this.model.find(filter).sort(order);
       if (all.length === 0) {
         const error = new Error("No hay documento");
         error.statusCode = 404;
@@ -29,11 +34,7 @@ class MongoManager {
   async readOne(id) {
     try {
       const one = await this.model.findById(id);
-      if (!one) {
-        const error = new Error("No hay documento con ese ID");
-        error.statusCode = 404;
-        throw error;
-      }
+      notFoundOne(one);
       return one;
     } catch (error) {
       throw error;
@@ -43,11 +44,7 @@ class MongoManager {
     try {
       const opt = { new: true };
       const one = await this.model.findByIdAndUpdate(id, data, opt);
-      if (!one) {
-        const error = new Error("No hay documento con ese ID para actualizar");
-        error.statusCode = 404;
-        throw error;
-      }
+      notFoundOne(one);
       return one;
     } catch (error) {
       throw error;
@@ -56,11 +53,7 @@ class MongoManager {
   async destroy(id) {
     try {
       const one = await this.model.findByIdAndDelete(id);
-      if (!one) {
-        const error = new Error("No hay documento con ese ID para eliminar");
-        error.statusCode = 404;
-        throw error;
-      }
+      notFoundOne(one);
       return one;
     } catch (error) {
       throw error;
