@@ -1,9 +1,11 @@
 import { Router } from "express";
 import { dishes } from "../../dao/mongo/manager.mongo.js";
+import propsDishes from "../../middlewares/propsDishes.mid.js";
+import isAdmin from "../../middlewares/isAdmin.mid.js";
 
 const dishesRouter = Router();
 
-dishesRouter.post("/", async (req, res, next) => {
+dishesRouter.post("/", isAdmin, propsDishes, async (req, res, next) => {
   try {
     const data = req.body;
     const response = await dishes.create(data);
@@ -38,7 +40,7 @@ dishesRouter.get("/:did", async (req, res, next) => {
     return next(error);
   }
 });
-dishesRouter.put("/:did", async (req, res, next) => {
+dishesRouter.put("/:did", isAdmin, async (req, res, next) => {
   try {
     const { did } = req.params;
     const data = req.body;
@@ -51,7 +53,7 @@ dishesRouter.put("/:did", async (req, res, next) => {
     return next(error);
   }
 });
-dishesRouter.delete("/:did", async (req, res, next) => {
+dishesRouter.delete("/:did", isAdmin, async (req, res, next) => {
   try {
     const { did } = req.params;
     const one = await dishes.destroy(did);

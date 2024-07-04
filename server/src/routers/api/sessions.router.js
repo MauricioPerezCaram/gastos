@@ -7,6 +7,7 @@ sesionssRouter.post("/login", async (req, res, next) => {
     const { email, password } = req.body;
     if (email && password === "hola1234") {
       req.session.email = email;
+      req.session.role = "admin";
       return res.json({
         statusCode: 200,
         message: "Inicion Sesiada",
