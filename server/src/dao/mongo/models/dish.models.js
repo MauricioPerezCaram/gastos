@@ -3,9 +3,12 @@ import { model, Schema } from "mongoose";
 let collection = "dishes";
 const schema = new Schema(
   {
-    name: { type: String, required: true, unique: true },
-    category: { type: String },
-    price: { type: Number, required: true },
+    name: { type: String, required: true, unique: true, index: true },
+    category: {
+      type: String,
+      enum: ["bebida", "entrada", "principal", "postre"],
+    },
+    price: { type: Number, required: true, index: true },
     photo: {
       type: String,
       default:
