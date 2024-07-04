@@ -10,7 +10,7 @@ import dbConnection from "./src/utils/db.js";
 import cookieParser from "cookie-parser";
 
 const server = express();
-const PORT = 8080;
+const PORT = process.env.PORT || 8080;
 const ready = () => {
   console.log("Servidor andando en puerto " + PORT);
   dbConnection();
@@ -18,6 +18,7 @@ const ready = () => {
 server.listen(PORT, ready);
 
 //middlewares
+server.use(cookieParser(process.env.SECRET_KEY));
 server.use(express.json());
 server.use(express.urlencoded({ extended: true }));
 server.use(express.static(__dirname + "/public"));
@@ -25,4 +26,3 @@ server.use(morgan("dev"));
 server.use("/", router);
 server.use(errorHandler);
 server.use(pathHandler);
-server.use(cookieParser());
