@@ -7,6 +7,7 @@ import pathHandler from "./src/middlewares/pathHandler.mid.js";
 import __dirname from "./utils.js";
 import morgan from "morgan";
 import dbConnection from "./src/utils/db.js";
+import cookieParser from "cookie-parser";
 
 const server = express();
 const PORT = 8080;
