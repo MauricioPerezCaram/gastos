@@ -8,6 +8,7 @@ import __dirname from "./utils.js";
 import morgan from "morgan";
 import dbConnection from "./src/utils/db.js";
 import cookieParser from "cookie-parser";
+import expressSession from "express-session";
 
 const server = express();
 const PORT = process.env.PORT || 8080;
@@ -19,6 +20,14 @@ server.listen(PORT, ready);
 
 //middlewares
 server.use(cookieParser(process.env.SECRET_KEY));
+server.use(
+  expressSession({
+    secret: process.env.SECRET_KEY,
+    resave: true,
+    saveUninitialized: true,
+    cookie: { maxAge: 6000 },
+  })
+);
 server.use(express.json());
 server.use(express.urlencoded({ extended: true }));
 server.use(express.static(__dirname + "/public"));
