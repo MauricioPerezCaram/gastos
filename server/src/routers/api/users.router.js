@@ -1,9 +1,10 @@
 import { Router } from "express";
 import { users } from "../../dao/mongo/manager.mongo.js";
+import isAdmin from "../../middlewares/isAdmin.mid.js";
 
 const usersRouter = Router();
 
-usersRouter.post("/", async (req, res, next) => {
+usersRouter.post("/", isAdmin, async (req, res, next) => {
   try {
     const data = req.body;
     const response = await users.create(data);
@@ -38,7 +39,7 @@ usersRouter.get("/:uid", async (req, res, next) => {
     return next(error);
   }
 });
-usersRouter.put("/:uid", async (req, res, next) => {
+usersRouter.put("/:uid", isAdmin, async (req, res, next) => {
   try {
     const { uid } = req.params;
     const data = req.body;
@@ -51,7 +52,7 @@ usersRouter.put("/:uid", async (req, res, next) => {
     return next(error);
   }
 });
-usersRouter.delete("/:uid", async (req, res, next) => {
+usersRouter.delete("/:uid", isAdmin, async (req, res, next) => {
   try {
     const { uid } = req.params;
     const one = await users.destroy(uid);
