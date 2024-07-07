@@ -25,7 +25,7 @@ server.use(
     secret: process.env.SECRET_KEY,
     resave: true,
     saveUninitialized: true,
-    cookie: { maxAge: 700000 },
+    cookie: { maxAge: 100000 },
   })
 );
 server.use(express.json());
