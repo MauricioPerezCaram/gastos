@@ -1,6 +1,25 @@
 import { Router } from "express";
+import { users } from "../../dao/mongo/manager.mongo.js";
+import has8char from "../../middlewares/has8char.mid.js";
 
 const sesionssRouter = Router();
+
+sesionssRouter.post("/register", has8char, async (req, res, next) => {
+  try {
+    const data = req.body;
+    const one = await users.create(data);
+    return res.json({
+      statusCode: 201,
+      message:
+        "Usuario registrado correctamente: " +
+        one.email +
+        " // Contraseña: " +
+        one.password,
+    });
+  } catch (error) {
+    return next(error);
+  }
+});
 
 sesionssRouter.post("/login", async (req, res, next) => {
   try {
