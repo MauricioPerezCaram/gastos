@@ -4,7 +4,7 @@ import isAdmin from "../../middlewares/isAdmin.mid.js";
 
 const usersRouter = Router();
 
-usersRouter.post("/", isAdmin, async (req, res, next) => {
+usersRouter.post("/", async (req, res, next) => {
   try {
     const data = req.body;
     const response = await users.create(data);
