@@ -2,25 +2,28 @@ import { Router } from "express";
 import { users } from "../../dao/mongo/manager.mongo.js";
 import has8char from "../../middlewares/has8char.mid.js";
 import isValidPass from "../../middlewares/isValidPass.mid.js";
+import passport from "../../middlewares/passport.mid.js";
 
 const sesionssRouter = Router();
 
-sesionssRouter.post("/register", has8char, async (req, res, next) => {
-  try {
-    const data = req.body;
-    const one = await users.create(data);
-    return res.json({
-      statusCode: 201,
-      message:
-        "Usuario registrado correctamente: " +
-        one.email +
-        " // Contraseña: " +
-        one.password,
-    });
-  } catch (error) {
-    return next(error);
+sesionssRouter.post(
+  "/register",
+  has8char,
+  passport.authenticate("register", {
+    session: false,
+    failureRedirect: "/api/sessions/badauth",
+  }),
+  async (req, res, next) => {
+    try {
+      return res.json({
+        statusCode: 201,
+        message: "Usuario registrado correctamente",
+      });
+    } catch (error) {
+      return next(error);
+    }
   }
-});
+);
 
 sesionssRouter.post("/login", isValidPass, async (req, res, next) => {
   try {
@@ -72,6 +75,17 @@ sesionssRouter.post("/signout", async (req, res, next) => {
       error.statusCode = 400;
       throw error;
     }
+  } catch (error) {
+    return next(error);
+  }
+});
+
+sesionssRouter.get("/badauth", async (req, res, next) => {
+  try {
+    return res.json({
+      statusCode: 401,
+      message: "Email ya utilizado, proba uno nuevo",
+    });
   } catch (error) {
     return next(error);
   }
