@@ -50,7 +50,7 @@ server.use(
     resave: true,
     saveUninitialized: true,
     store: new MongoStore({
-      ttl: 10,
+      ttl: 7 * 24 * 60 * 60,
       mongoUrl: process.env.DB_LINK,
     }),
   })
