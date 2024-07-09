@@ -44,6 +44,33 @@ sesionssRouter.post(
   }
 );
 
+//VOLVER A PONER A POST
+sesionssRouter.get(
+  "/google",
+  passport.authenticate("google", {
+    scope: ["email", "profile"],
+  })
+);
+
+sesionssRouter.get(
+  "/google/callback",
+  passport.authenticate("google", {
+    session: false,
+    failureRedirect: "/api/sessions/badauth",
+  }),
+  async (req, res, next) => {
+    try {
+      return res.json({
+        statusCode: 200,
+        message: "Inicion Sesiada Gon Coogle",
+        session: req.session,
+      });
+    } catch (error) {
+      return next(error);
+    }
+  }
+);
+
 sesionssRouter.post("/me", async (req, res, next) => {
   try {
     if (req.session.email) {
