@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { users } from "../../dao/mongo/manager.mongo.js";
 import has8char from "../../middlewares/has8char.mid.js";
-import isValidPass from "../../middlewares/isValidPass.mid.js";
+// import isValidPass from "../../middlewares/isValidPass.mid.js";
 import passport from "../../middlewares/passport.mid.js";
 
 const sesionssRouter = Router();
@@ -25,25 +25,24 @@ sesionssRouter.post(
   }
 );
 
-sesionssRouter.post("/login", isValidPass, async (req, res, next) => {
-  try {
-    const { email, password } = req.body;
-    if (email && password === "hola1234") {
-      req.session.email = email;
-      req.session.role = "admin";
+sesionssRouter.post(
+  "/login",
+  passport.authenticate("login", {
+    session: false,
+    failureRedirect: "/api/sessions/badauth",
+  }),
+  async (req, res, next) => {
+    try {
       return res.json({
         statusCode: 200,
         message: "Inicion Sesiada",
         session: req.session,
       });
+    } catch (error) {
+      return next(error);
     }
-    const error = new Error("Error de autenticación");
-    error.statusCode = 401;
-    throw error;
-  } catch (error) {
-    return next(error);
   }
-});
+);
 
 sesionssRouter.post("/me", async (req, res, next) => {
   try {
@@ -84,7 +83,7 @@ sesionssRouter.get("/badauth", async (req, res, next) => {
   try {
     return res.json({
       statusCode: 401,
-      message: "Email ya utilizado, proba uno nuevo",
+      message: "Error de autenticación",
     });
   } catch (error) {
     return next(error);
