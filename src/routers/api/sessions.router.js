@@ -36,7 +36,7 @@ sesionssRouter.post(
       return res.json({
         statusCode: 200,
         message: "Inicion Sesiada",
-        session: req.session,
+        token: req.token,
       });
     } catch (error) {
       return next(error);

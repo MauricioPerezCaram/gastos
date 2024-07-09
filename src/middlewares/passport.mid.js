@@ -2,6 +2,7 @@ import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
 import { Strategy as GoogleStrategy } from "passport-google-oauth2";
 import { createHash, verifyHash } from "../utils/hash.util.js";
+import { createToken } from "../utils/token.util.js";
 import { users } from "../dao/mongo/manager.mongo.js";
 const { GOOGLE_ID, GOOGLE_CLIENT } = process.env;
 
@@ -34,15 +35,10 @@ passport.use(
     async (req, email, password, done) => {
       try {
         const user = await users.readByEmail(email);
-        if (user) {
-          const verify = verifyHash(password, user.password);
-          if (verify) {
-            req.session.email = email;
-            req.session.role = user.role;
-            return done(null, user);
-          } else {
-            return done(null, false);
-          }
+        if (user && verifyHash(password, user.password)) {
+          const token = createToken({ email, role: user.role });
+          req.token = token;
+          return done(null, user);
         } else {
           return done(null, false);
         }
