@@ -17,7 +17,7 @@ sesionssRouter.post(
     try {
       return res.json({
         statusCode: 201,
-        message: "Usuario registrado correctamente",
+        message: "Registered!",
       });
     } catch (error) {
       return next(error);
@@ -35,7 +35,7 @@ sesionssRouter.post(
     try {
       return res.json({
         statusCode: 200,
-        message: "Inicion Sesiada",
+        message: "Iniciaste sesión correctamente",
         token: req.token,
       });
     } catch (error) {
@@ -45,11 +45,9 @@ sesionssRouter.post(
 );
 
 //VOLVER A PONER A POST
-sesionssRouter.get(
+sesionssRouter.post(
   "/google",
-  passport.authenticate("google", {
-    scope: ["email", "profile"],
-  })
+  passport.authenticate("google", { scope: ["email", "profile"] })
 );
 
 sesionssRouter.get(
@@ -62,7 +60,7 @@ sesionssRouter.get(
     try {
       return res.json({
         statusCode: 200,
-        message: "Inicion Sesiada Gon Coogle",
+        message: "Logged in with google!",
         session: req.session,
       });
     } catch (error) {
@@ -76,7 +74,7 @@ sesionssRouter.post("/me", async (req, res, next) => {
     if (req.session.email) {
       return res.json({
         statusCode: 200,
-        message: "Iniciaste sesión con el email " + req.session.email,
+        message: "Session with email: " + req.session.email,
       });
     } else {
       const error = new Error("No estas en una sesión");
@@ -94,10 +92,10 @@ sesionssRouter.post("/signout", async (req, res, next) => {
       req.session.destroy();
       return res.json({
         statusCode: 200,
-        message: "Has cerrado sesión correctamente",
+        message: "Signed out!",
       });
     } else {
-      const error = new Error("No estas en una sesión");
+      const error = new Error("No cerraste sesión porque no estas en una");
       error.statusCode = 400;
       throw error;
     }
@@ -106,11 +104,11 @@ sesionssRouter.post("/signout", async (req, res, next) => {
   }
 });
 
-sesionssRouter.get("/badauth", async (req, res, next) => {
+sesionssRouter.get("/badauth", (req, res, next) => {
   try {
     return res.json({
       statusCode: 401,
-      message: "Error de autenticación",
+      message: "Bad auth",
     });
   } catch (error) {
     return next(error);
