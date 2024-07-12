@@ -33,11 +33,15 @@ sesionssRouter.post(
   }),
   async (req, res, next) => {
     try {
-      return res.json({
-        statusCode: 200,
-        message: "Iniciaste sesión correctamente",
-        token: req.token,
-      });
+      return res
+        .cookie("token", req.token, {
+          maxAge: 7 * 24 * 60 * 60,
+          httpOnly: true,
+        })
+        .json({
+          statusCode: 200,
+          message: "Iniciaste sesión correctamente",
+        });
     } catch (error) {
       return next(error);
     }
