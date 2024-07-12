@@ -2,10 +2,11 @@ import { Router } from "express";
 import { dishes } from "../../dao/mongo/manager.mongo.js";
 import propsDishes from "../../middlewares/propsDishes.mid.js";
 import isAdmin from "../../middlewares/isAdmin.mid.js";
+import isAuth from "../../middlewares/isAuth.mid.js";
 
 const dishesRouter = Router();
 
-dishesRouter.post("/", isAdmin, propsDishes, async (req, res, next) => {
+dishesRouter.post("/", isAuth, isAdmin, propsDishes, async (req, res, next) => {
   try {
     const data = req.body;
     const response = await dishes.create(data);
