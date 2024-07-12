@@ -33,11 +33,15 @@ sesionssRouter.post(
   }),
   async (req, res, next) => {
     try {
-      return res.json({
-        statusCode: 200,
-        message: "Iniciaste sesión correctamente",
-        token: req.token,
-      });
+      return res
+        .cookie("token", req.token, {
+          maxAge: 7 * 24 * 60 * 60,
+          httpOnly: true,
+        })
+        .json({
+          statusCode: 200,
+          message: "Iniciaste sesión correctamente",
+        });
     } catch (error) {
       return next(error);
     }
@@ -88,17 +92,10 @@ sesionssRouter.post("/me", async (req, res, next) => {
 
 sesionssRouter.post("/signout", async (req, res, next) => {
   try {
-    if (req.session.email) {
-      req.session.destroy();
-      return res.json({
-        statusCode: 200,
-        message: "Signed out!",
-      });
-    } else {
-      const error = new Error("No cerraste sesión porque no estas en una");
-      error.statusCode = 400;
-      throw error;
-    }
+    return res.clearCookie("token").json({
+      statusCode: 200,
+      message: "Cerraste sesión",
+    });
   } catch (error) {
     return next(error);
   }

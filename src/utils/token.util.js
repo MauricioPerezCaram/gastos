@@ -7,8 +7,7 @@ function createToken(data) {
   return token;
 }
 
-function verifytoken(headers) {
-  const token = headers.token;
+function verifytoken(token) {
   if (token) {
     const data = jwt.verify(token, process.env.SECRET_TOKEN);
     return data;
