@@ -92,17 +92,10 @@ sesionssRouter.post("/me", async (req, res, next) => {
 
 sesionssRouter.post("/signout", async (req, res, next) => {
   try {
-    if (req.session.email) {
-      req.session.destroy();
-      return res.json({
-        statusCode: 200,
-        message: "Signed out!",
-      });
-    } else {
-      const error = new Error("No cerraste sesión porque no estas en una");
-      error.statusCode = 400;
-      throw error;
-    }
+    return res.clearCookie("token").json({
+      statusCode: 200,
+      message: "Cerraste sesión",
+    });
   } catch (error) {
     return next(error);
   }
