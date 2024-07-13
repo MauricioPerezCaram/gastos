@@ -1,32 +1,11 @@
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
 import { Strategy as GoogleStrategy } from "passport-google-oauth2";
+import { ExtractJwt, Strategy as JwtStrategy } from "passport-jwt";
 import { createHash, verifyHash } from "../utils/hash.util.js";
 import { createToken } from "../utils/token.util.js";
 import { users } from "../dao/mongo/manager.mongo.js";
-const { GOOGLE_ID, GOOGLE_CLIENT } = process.env;
-
-passport.use(
-  "register",
-  new LocalStrategy(
-    { passReqToCallback: true, usernameField: "email" },
-    async (req, email, password, done) => {
-      try {
-        let one = await users.readByEmail(email);
-        if (!one) {
-          let data = req.body;
-          data.password = createHash(password);
-          let user = await users.create(data);
-          return done(null, user);
-        } else {
-          return done(null, false);
-        }
-      } catch (error) {
-        return done(error);
-      }
-    }
-  )
-);
+const { GOOGLE_ID, GOOGLE_CLIENT, SECRET } = process.env;
 
 passport.use(
   "login",
@@ -48,7 +27,6 @@ passport.use(
     }
   )
 );
-
 passport.use(
   "google",
   new GoogleStrategy(
@@ -60,24 +38,44 @@ passport.use(
     },
     async (req, accessToken, refreshToken, profile, done) => {
       try {
-        console.log(profile);
-        let user = await users.readByEmail(profile.id);
-        if (user) {
-          req.session.email = user.email;
-          req.session.role = user.role;
-          return done(null, user);
-        } else {
+        let user = await users.readByEmail(profile.id + "@gmail.com");
+        if (!user) {
           user = {
-            email: profile.id,
+            email: profile.id + "@gmail.com",
             name: profile.name.givenName,
-            lastname: profile.name.familyName,
+            lastName: profile.name.familyName,
             photo: profile.coverPhoto,
             password: createHash(profile.id),
           };
           user = await users.create(user);
-          req.session.email = user.email;
-          req.session.role = user.role;
+        }
+        req.session.email = user.email;
+        req.session.role = user.role;
+        return done(null, user);
+      } catch (error) {
+        return done(error);
+      }
+    }
+  )
+);
+
+passport.use(
+  "jwt",
+  new JwtStrategy(
+    {
+      jwtFromRequest: ExtractJwt.fromExtractors([
+        (req) => req?.cookies["token"],
+      ]),
+      secretOrKey: SECRET,
+    },
+    async (payload, done) => {
+      try {
+        const user = await users.readByEmail(payload.email);
+        if (user) {
+          user.password = null;
           return done(null, user);
+        } else {
+          return done(null, false);
         }
       } catch (error) {
         return done(error);
