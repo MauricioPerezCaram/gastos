@@ -2,22 +2,26 @@ import { Router } from "express";
 import { dishes } from "../../dao/mongo/manager.mongo.js";
 import propsDishes from "../../middlewares/propsDishes.mid.js";
 import isAdmin from "../../middlewares/isAdmin.mid.js";
-import isAuth from "../../middlewares/isAuth.mid.js";
+import passport from "../../middlewares/passport.mid.js";
 
 const dishesRouter = Router();
 
-dishesRouter.post("/", isAuth, isAdmin, propsDishes, async (req, res, next) => {
-  try {
-    const data = req.body;
-    const response = await dishes.create(data);
-    return res.json({
-      statusCode: 201,
-      response,
-    });
-  } catch (error) {
-    return next(error);
+dishesRouter.post(
+  "/",
+  passport.authenticate("jwt", { session: false }),
+  isAdmin,
+  propsDishes,
+  async (req, res, next) => {
+    try {
+      const data = req.body;
+      const response = await dishes.create(data);
+      return res.json({ statusCode: 201, response });
+    } catch (error) {
+      return next(error);
+    }
   }
-});
+);
+
 dishesRouter.get("/", async (req, res, next) => {
   try {
     const all = await dishes.read({});

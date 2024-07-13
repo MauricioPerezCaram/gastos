@@ -4,10 +4,10 @@ import has8char from "../../middlewares/has8char.mid.js";
 // import isValidPass from "../../middlewares/isValidPass.mid.js";
 import passport from "../../middlewares/passport.mid.js";
 
-const sesionssRouter = Router();
+const sessionsRouter = Router();
 
 //register
-sesionssRouter.post(
+sessionsRouter.post(
   "/register",
   has8char,
   passport.authenticate("register", {
@@ -27,7 +27,7 @@ sesionssRouter.post(
 );
 
 //login
-sesionssRouter.post(
+sessionsRouter.post(
   "/login",
   passport.authenticate("login", {
     session: false,
@@ -51,13 +51,13 @@ sesionssRouter.post(
 );
 
 //google
-sesionssRouter.post(
+sessionsRouter.post(
   "/google",
   passport.authenticate("google", { scope: ["email", "profile"] })
 );
 
 //google
-sesionssRouter.get(
+sessionsRouter.get(
   "/google/callback",
   passport.authenticate("google", {
     session: false,
@@ -77,7 +77,7 @@ sesionssRouter.get(
 );
 
 // //me
-// sesionssRouter.post(
+// sessionsRouter.post(
 //   "/me",
 //   passport.authenticate("jwt", { session: false }),
 //   async (req, res, next) => {
@@ -99,7 +99,7 @@ sesionssRouter.get(
 // );
 
 //signout
-sesionssRouter.post("/signout", async (req, res, next) => {
+sessionsRouter.post("/signout", async (req, res, next) => {
   try {
     return res.clearCookie("token").json({
       statusCode: 200,
@@ -110,7 +110,7 @@ sesionssRouter.post("/signout", async (req, res, next) => {
   }
 });
 
-sesionssRouter.get("/badauth", (req, res, next) => {
+sessionsRouter.get("/badauth", (req, res, next) => {
   try {
     return res.json({
       statusCode: 401,
@@ -121,7 +121,7 @@ sesionssRouter.get("/badauth", (req, res, next) => {
   }
 });
 
-sesionssRouter.get("/emailutilizado", (req, res, next) => {
+sessionsRouter.get("/emailutilizado", (req, res, next) => {
   try {
     return res.json({
       statusCode: 401,
@@ -132,7 +132,7 @@ sesionssRouter.get("/emailutilizado", (req, res, next) => {
   }
 });
 
-sesionssRouter.get("/datosincorrectos", (req, res, next) => {
+sessionsRouter.get("/datosincorrectos", (req, res, next) => {
   try {
     return res.json({
       statusCode: 401,
@@ -143,4 +143,4 @@ sesionssRouter.get("/datosincorrectos", (req, res, next) => {
   }
 });
 
-export default sesionssRouter;
+export default sessionsRouter;
