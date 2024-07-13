@@ -10,15 +10,12 @@ const sessionsRouter = Router();
 sessionsRouter.post(
   "/register",
   has8char,
-  passport.authenticate("register", {
-    session: false,
-    failureRedirect: "/api/sessions/emailutilizado",
-  }),
+  // passCallBack("register"),
   async (req, res, next) => {
     try {
       return res.json({
         statusCode: 201,
-        message: "Usuario registrado correctamente",
+        message: "Registered!",
       });
     } catch (error) {
       return next(error);
@@ -99,16 +96,23 @@ sessionsRouter.get(
 // );
 
 //signout
-sessionsRouter.post("/signout", async (req, res, next) => {
-  try {
-    return res.clearCookie("token").json({
-      statusCode: 200,
-      message: "Cerraste sesión",
-    });
-  } catch (error) {
-    return next(error);
+sessionsRouter.post(
+  "/signout",
+  passport.authenticate("jwt", {
+    session: false,
+    failureRedirect: "/api/sessions/signout/cb",
+  }),
+  async (req, res, next) => {
+    try {
+      return res.clearCookie("token").json({
+        statusCode: 200,
+        message: "Cerraste sesión",
+      });
+    } catch (error) {
+      return next(error);
+    }
   }
-});
+);
 
 sessionsRouter.get("/badauth", (req, res, next) => {
   try {
@@ -137,6 +141,17 @@ sessionsRouter.get("/datosincorrectos", (req, res, next) => {
     return res.json({
       statusCode: 401,
       message: "Email o contraseña incorrecta",
+    });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+sessionsRouter.get("/signout/cb", (req, res, next) => {
+  try {
+    return res.json({
+      statusCode: 401,
+      message: "No estas en una sesión",
     });
   } catch (error) {
     return next(error);
