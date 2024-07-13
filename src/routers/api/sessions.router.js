@@ -6,18 +6,19 @@ import passport from "../../middlewares/passport.mid.js";
 
 const sesionssRouter = Router();
 
+//register
 sesionssRouter.post(
   "/register",
   has8char,
   passport.authenticate("register", {
     session: false,
-    failureRedirect: "/api/sessions/badauth",
+    failureRedirect: "/api/sessions/emailutilizado",
   }),
   async (req, res, next) => {
     try {
       return res.json({
         statusCode: 201,
-        message: "Registered!",
+        message: "Usuario registrado correctamente",
       });
     } catch (error) {
       return next(error);
@@ -25,11 +26,12 @@ sesionssRouter.post(
   }
 );
 
+//login
 sesionssRouter.post(
   "/login",
   passport.authenticate("login", {
     session: false,
-    failureRedirect: "/api/sessions/badauth",
+    failureRedirect: "/api/sessions/datosincorrectos",
   }),
   async (req, res, next) => {
     try {
@@ -48,12 +50,13 @@ sesionssRouter.post(
   }
 );
 
-//VOLVER A PONER A POST
+//google
 sesionssRouter.post(
   "/google",
   passport.authenticate("google", { scope: ["email", "profile"] })
 );
 
+//google
 sesionssRouter.get(
   "/google/callback",
   passport.authenticate("google", {
@@ -64,7 +67,7 @@ sesionssRouter.get(
     try {
       return res.json({
         statusCode: 200,
-        message: "Logged in with google!",
+        message: "Iniciaste sesión con google",
         session: req.session,
       });
     } catch (error) {
@@ -73,23 +76,29 @@ sesionssRouter.get(
   }
 );
 
-sesionssRouter.post("/me", async (req, res, next) => {
-  try {
-    if (req.session.email) {
-      return res.json({
-        statusCode: 200,
-        message: "Session with email: " + req.session.email,
-      });
-    } else {
-      const error = new Error("No estas en una sesión");
-      error.statusCode = 400;
-      throw error;
-    }
-  } catch (error) {
-    return next(error);
-  }
-});
+// //me
+// sesionssRouter.post(
+//   "/me",
+//   passport.authenticate("jwt", { session: false }),
+//   async (req, res, next) => {
+//     try {
+//       if (req.user && req.user.email) {
+//         return res.json({
+//           statusCode: 200,
+//           message: `Session with email: ${req.user.email}`,
+//         });
+//       } else {
+//         const error = new Error("No estas en una sesión");
+//         error.statusCode = 400;
+//         throw error;
+//       }
+//     } catch (error) {
+//       return next(error);
+//     }
+//   }
+// );
 
+//signout
 sesionssRouter.post("/signout", async (req, res, next) => {
   try {
     return res.clearCookie("token").json({
@@ -106,6 +115,28 @@ sesionssRouter.get("/badauth", (req, res, next) => {
     return res.json({
       statusCode: 401,
       message: "Bad auth",
+    });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+sesionssRouter.get("/emailutilizado", (req, res, next) => {
+  try {
+    return res.json({
+      statusCode: 401,
+      message: "Correo electronico ya utilizado",
+    });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+sesionssRouter.get("/datosincorrectos", (req, res, next) => {
+  try {
+    return res.json({
+      statusCode: 401,
+      message: "Email o contraseña incorrecta",
     });
   } catch (error) {
     return next(error);
