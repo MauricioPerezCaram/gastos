@@ -8,6 +8,31 @@ import { users } from "../dao/mongo/manager.mongo.js";
 const { GOOGLE_ID, GOOGLE_CLIENT, SECRET } = process.env;
 
 passport.use(
+  "register",
+  new LocalStrategy(
+    { passReqToCallback: true, usernameField: "email" },
+    async (req, email, password, done) => {
+      try {
+        let one = await users.readByEmail(email);
+        if (!one) {
+          let data = req.body;
+          data.password = createHash(password);
+          let user = await users.create(data);
+          return done(null, user);
+        } else {
+          return done(null, false, {
+            message: "Ya existe un usuario con ese email",
+            statusCode: 400,
+          });
+        }
+      } catch (error) {
+        return done(error);
+      }
+    }
+  )
+);
+
+passport.use(
   "login",
   new LocalStrategy(
     { passReqToCallback: true, usernameField: "email" },
@@ -19,7 +44,9 @@ passport.use(
           req.token = token;
           return done(null, user);
         } else {
-          return done(null, false, { message: "Bad auth!!!" });
+          return done(null, false, {
+            message: "Contraseña o email incorrecto",
+          });
         }
       } catch (error) {
         return done(error);
