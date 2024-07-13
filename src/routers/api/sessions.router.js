@@ -3,6 +3,7 @@ import { Router } from "express";
 import has8char from "../../middlewares/has8char.mid.js";
 // import isValidPass from "../../middlewares/isValidPass.mid.js";
 import passport from "../../middlewares/passport.mid.js";
+import passCallback from "../../middlewares/passCallback.mid.js";
 
 const sessionsRouter = Router();
 
@@ -10,12 +11,12 @@ const sessionsRouter = Router();
 sessionsRouter.post(
   "/register",
   has8char,
-  // passCallBack("register"),
+  passCallback("register"),
   async (req, res, next) => {
     try {
       return res.json({
         statusCode: 201,
-        message: "Registered!",
+        message: "Usuario registrado exitosamente",
       });
     } catch (error) {
       return next(error);
@@ -24,28 +25,21 @@ sessionsRouter.post(
 );
 
 //login
-sessionsRouter.post(
-  "/login",
-  passport.authenticate("login", {
-    session: false,
-    failureRedirect: "/api/sessions/datosincorrectos",
-  }),
-  async (req, res, next) => {
-    try {
-      return res
-        .cookie("token", req.token, {
-          maxAge: 7 * 24 * 60 * 60,
-          httpOnly: true,
-        })
-        .json({
-          statusCode: 200,
-          message: "Iniciaste sesión correctamente",
-        });
-    } catch (error) {
-      return next(error);
-    }
+sessionsRouter.post("/login", passCallback("login"), async (req, res, next) => {
+  try {
+    return res
+      .cookie("token", req.token, {
+        maxAge: 7 * 24 * 60 * 60,
+        httpOnly: true,
+      })
+      .json({
+        statusCode: 200,
+        message: "Iniciaste sesión correctamente",
+      });
+  } catch (error) {
+    return next(error);
   }
-);
+});
 
 //google
 sessionsRouter.post(
@@ -73,46 +67,33 @@ sessionsRouter.get(
   }
 );
 
-// //me
-// sessionsRouter.post(
-//   "/me",
-//   passport.authenticate("jwt", { session: false }),
-//   async (req, res, next) => {
-//     try {
-//       if (req.user && req.user.email) {
-//         return res.json({
-//           statusCode: 200,
-//           message: `Session with email: ${req.user.email}`,
-//         });
-//       } else {
-//         const error = new Error("No estas en una sesión");
-//         error.statusCode = 400;
-//         throw error;
-//       }
-//     } catch (error) {
-//       return next(error);
-//     }
-//   }
-// );
+//me
+sessionsRouter.post("/me", passCallback("jwt"), async (req, res, next) => {
+  try {
+    const user = {
+      email: req.user.email,
+      role: req.user.role,
+    };
+    return res.json({
+      statusCode: 200,
+      response: user,
+    });
+  } catch (error) {
+    return next(error);
+  }
+});
 
 //signout
-sessionsRouter.post(
-  "/signout",
-  passport.authenticate("jwt", {
-    session: false,
-    failureRedirect: "/api/sessions/signout/cb",
-  }),
-  async (req, res, next) => {
-    try {
-      return res.clearCookie("token").json({
-        statusCode: 200,
-        message: "Cerraste sesión",
-      });
-    } catch (error) {
-      return next(error);
-    }
+sessionsRouter.post("/signout", passCallback("jwt"), async (req, res, next) => {
+  try {
+    return res.clearCookie("token").json({
+      statusCode: 200,
+      message: "Cerraste sesión",
+    });
+  } catch (error) {
+    return next(error);
   }
-);
+});
 
 sessionsRouter.get("/badauth", (req, res, next) => {
   try {
