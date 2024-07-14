@@ -1,10 +1,11 @@
 import { Router } from "express";
 import { users } from "../../dao/mongo/manager.mongo.js";
 import isAdmin from "../../middlewares/isAdmin.mid.js";
+import has8char from "../../middlewares/has8char.mid.js";
 
 const usersRouter = Router();
 
-usersRouter.post("/", async (req, res, next) => {
+usersRouter.post("/", has8char, async (req, res, next) => {
   try {
     const data = req.body;
     const response = await users.create(data);

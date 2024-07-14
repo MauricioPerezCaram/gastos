@@ -1,7 +1,6 @@
 import "dotenv/config.js";
-
 import express from "express";
-import router from "./src/routers/index.router.js";
+import IndexRouter from "./src/routers/index.router.js";
 import errorHandler from "./src/middlewares/errorHandler.mid.js";
 import pathHandler from "./src/middlewares/pathHandler.mid.js";
 import __dirname from "./utils.js";
@@ -59,6 +58,7 @@ server.use(express.json());
 server.use(express.urlencoded({ extended: true }));
 server.use(express.static(__dirname + "/public"));
 server.use(morgan("dev"));
-server.use("/", router);
+const router = new IndexRouter();
+server.use("/", router.getRouter());
 server.use(errorHandler);
 server.use(pathHandler);
