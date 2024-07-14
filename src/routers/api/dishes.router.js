@@ -15,7 +15,7 @@ export default class DishesRouter extends CustomRouter {
         try {
           const data = req.body;
           const response = await dishes.create(data);
-          return res.success200(response);
+          return res.success201(response);
         } catch (error) {
           return next(error);
         }
@@ -25,10 +25,7 @@ export default class DishesRouter extends CustomRouter {
     this.read("/", async (req, res, next) => {
       try {
         const all = await dishes.read({});
-        return res.json({
-          statusCode: 200,
-          response: all,
-        });
+        return res.success200(all);
       } catch (error) {
         return next(error);
       }
@@ -37,10 +34,7 @@ export default class DishesRouter extends CustomRouter {
       try {
         const { did } = req.params;
         const one = await dishes.readOne(did);
-        return res.json({
-          statusCode: 200,
-          response: one,
-        });
+        return res.success200(one);
       } catch (error) {
         return next(error);
       }
@@ -50,10 +44,7 @@ export default class DishesRouter extends CustomRouter {
         const { did } = req.params;
         const data = req.body;
         const one = await dishes.update(did, data);
-        return res.json({
-          statusCode: 200,
-          response: one,
-        });
+        return res.success200(one);
       } catch (error) {
         return next(error);
       }
@@ -62,10 +53,7 @@ export default class DishesRouter extends CustomRouter {
       try {
         const { did } = req.params;
         const one = await dishes.destroy(did);
-        return res.json({
-          statusCode: 200,
-          response: one,
-        });
+        return res.success200("Eliminado el plato: " + one.name);
       } catch (error) {
         return next(error);
       }

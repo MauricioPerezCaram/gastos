@@ -9,10 +9,7 @@ export default class UsersRouter extends CustomRouter {
       try {
         const data = req.body;
         const response = await users.create(data);
-        return res.json({
-          statusCode: 201,
-          response,
-        });
+        return res.success201(response);
       } catch (error) {
         return next(error);
       }
@@ -20,10 +17,7 @@ export default class UsersRouter extends CustomRouter {
     this.read("/", async (req, res, next) => {
       try {
         const all = await users.read({});
-        return res.json({
-          statusCode: 200,
-          response: all,
-        });
+        return res.success200(all);
       } catch (error) {
         return next(error);
       }
@@ -32,10 +26,7 @@ export default class UsersRouter extends CustomRouter {
       try {
         const { uid } = req.params;
         const one = await users.readOne(uid);
-        return res.json({
-          statusCode: 200,
-          response: one,
-        });
+        return res.success200(one);
       } catch (error) {
         return next(error);
       }
@@ -45,10 +36,7 @@ export default class UsersRouter extends CustomRouter {
         const { uid } = req.params;
         const data = req.body;
         const one = await users.update(uid, data);
-        return res.json({
-          statusCode: 200,
-          response: one,
-        });
+        return res.success200(one);
       } catch (error) {
         return next(error);
       }
@@ -57,10 +45,7 @@ export default class UsersRouter extends CustomRouter {
       try {
         const { uid } = req.params;
         const one = await users.destroy(uid);
-        return res.json({
-          statusCode: 200,
-          response: one,
-        });
+        return res.success200("Eliminado el usuario: " + one.name);
       } catch (error) {
         return next(error);
       }

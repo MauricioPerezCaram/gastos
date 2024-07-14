@@ -25,7 +25,7 @@ export default class CustomRouter {
   }
   responses = (req, res, next) => {
     res.success200 = (payload) =>
-      res.json({ statusCode: 200, responseDefault: payload });
+      res.json({ statusCode: 200, response: payload });
     res.success201 = (payload) =>
       res.json({ statusCode: 201, response: payload });
     res.error400 = (message) => res.json({ statusCode: 400, message });
@@ -34,7 +34,7 @@ export default class CustomRouter {
     res.error403 = () =>
       res.json({ statusCode: 403, message: "No tenes acceso" });
     res.error404 = () =>
-      res.json({ statusCode: 404, message: "NNo encontrado" });
+      res.json({ statusCode: 404, message: "No encontrado" });
     return next();
   };
   //   policies = (arrayOfPolicies) => async (req, res, next) => {
