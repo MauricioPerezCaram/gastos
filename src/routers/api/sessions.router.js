@@ -11,6 +11,7 @@ const sessionsRouter = Router();
 sessionsRouter.post(
   "/register",
   has8char,
+
   passCallback("register"),
   async (req, res, next) => {
     try {

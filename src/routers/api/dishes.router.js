@@ -8,6 +8,7 @@ export default class DishesRouter extends CustomRouter {
   init() {
     this.create(
       "/",
+      ["ADMIN", "PREM"],
       passport.authenticate("jwt", { session: false }),
       isAdmin,
       propsDishes,
@@ -22,7 +23,7 @@ export default class DishesRouter extends CustomRouter {
       }
     );
 
-    this.read("/", async (req, res, next) => {
+    this.read("/", ["PUBLIC"], async (req, res, next) => {
       try {
         const all = await dishes.read({});
         return res.success200(all);
@@ -30,7 +31,7 @@ export default class DishesRouter extends CustomRouter {
         return next(error);
       }
     });
-    this.read("/:did", async (req, res, next) => {
+    this.read("/:did", ["PUBLIC"], async (req, res, next) => {
       try {
         const { did } = req.params;
         const one = await dishes.readOne(did);
@@ -39,7 +40,7 @@ export default class DishesRouter extends CustomRouter {
         return next(error);
       }
     });
-    this.update("/:did", isAdmin, async (req, res, next) => {
+    this.update("/:did", ["ADMIN", "PREM"], isAdmin, async (req, res, next) => {
       try {
         const { did } = req.params;
         const data = req.body;
@@ -49,14 +50,19 @@ export default class DishesRouter extends CustomRouter {
         return next(error);
       }
     });
-    this.destroy("/:did", isAdmin, async (req, res, next) => {
-      try {
-        const { did } = req.params;
-        const one = await dishes.destroy(did);
-        return res.success200("Eliminado el plato: " + one.name);
-      } catch (error) {
-        return next(error);
+    this.destroy(
+      "/:did",
+      ["ADMIN", "PREM"],
+      isAdmin,
+      async (req, res, next) => {
+        try {
+          const { did } = req.params;
+          const one = await dishes.destroy(did);
+          return res.success200("Eliminado el plato: " + one.name);
+        } catch (error) {
+          return next(error);
+        }
       }
-    });
+    );
   }
 }
