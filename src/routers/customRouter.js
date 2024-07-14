@@ -23,17 +23,20 @@ export default class CustomRouter {
       }
     });
   }
-  //   responses = (req, res, next) => {
-  //     res.success200 = (payload) =>
-  //       res.json({ statusCode: 200, response: payload });
-  //     res.success201 = (payload) =>
-  //       res.json({ statusCode: 201, response: payload });
-  //     res.error400 = (message) => res.json({ statusCode: 400, message });
-  //     res.error401 = () => res.json({ statusCode: 401, message: "Bad auth!" });
-  //     res.error403 = () => res.json({ statusCode: 403, message: "Forbidden!" });
-  //     res.error404 = () => res.json({ statusCode: 404, message: "Not found!" });
-  //     return next();
-  //   };
+  responses = (req, res, next) => {
+    res.success200 = (payload) =>
+      res.json({ statusCode: 200, responseDefault: payload });
+    res.success201 = (payload) =>
+      res.json({ statusCode: 201, response: payload });
+    res.error400 = (message) => res.json({ statusCode: 400, message });
+    res.error401 = () =>
+      res.json({ statusCode: 401, message: "Error en la autenticación" });
+    res.error403 = () =>
+      res.json({ statusCode: 403, message: "No tenes acceso" });
+    res.error404 = () =>
+      res.json({ statusCode: 404, message: "NNo encontrado" });
+    return next();
+  };
   //   policies = (arrayOfPolicies) => async (req, res, next) => {
   //     try {
   //       if (arrayOfPolicies.includes("PUBLIC")) return next();
@@ -58,11 +61,10 @@ export default class CustomRouter {
   //     } catch (error) {
   //       return next(error)
   //     }
-  //   };
   create(path, /*policies,*/ ...cbs) {
     this.router.post(
       path,
-      //   this.responses,
+      this.responses,
       //   this.policies(policies),
       this.applyCbs(cbs)
     );
@@ -70,7 +72,7 @@ export default class CustomRouter {
   read(path, /*policies,*/ ...cbs) {
     this.router.get(
       path,
-      //   this.responses,
+      this.responses,
       //   this.policies(policies),
       this.applyCbs(cbs)
     );
@@ -78,7 +80,7 @@ export default class CustomRouter {
   update(path, /*policies,*/ ...cbs) {
     this.router.put(
       path,
-      //   this.responses,
+      this.responses,
       //   this.policies(policies),
       this.applyCbs(cbs)
     );
@@ -86,12 +88,12 @@ export default class CustomRouter {
   destroy(path, /*policies,*/ ...cbs) {
     this.router.delete(
       path,
-      //   this.responses,
+      this.responses,
       //   this.policies(policies),
       this.applyCbs(cbs)
     );
   }
   use(path, ...cbs) {
-    this.router.use(path, /*this.responses,*/ this.applyCbs(cbs));
+    this.router.use(path, this.responses, this.applyCbs(cbs));
   }
 }

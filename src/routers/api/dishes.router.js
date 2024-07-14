@@ -15,7 +15,7 @@ export default class DishesRouter extends CustomRouter {
         try {
           const data = req.body;
           const response = await dishes.create(data);
-          return res.json({ statusCode: 201, response });
+          return res.success200(response);
         } catch (error) {
           return next(error);
         }
