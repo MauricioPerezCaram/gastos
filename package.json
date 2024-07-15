@@ -17,6 +17,7 @@
     "bytes": "^3.1.2",
     "call-bind": "^1.0.7",
     "chokidar": "^3.6.0",
+    "commander": "^12.1.0",
     "concat-map": "^0.0.1",
     "connect-mongo": "^5.1.0",
     "content-disposition": "^0.5.4",
@@ -114,7 +115,8 @@
   "type": "module",
   "scripts": {
     "start": "node ./server.js",
-    "dev": "nodemon ./server.js"
+    "dev": "nodemon ./server.js --env dev",
+    "test": "nodemon ./server.js --env test"
   },
   "keywords": [],
   "author": "",
