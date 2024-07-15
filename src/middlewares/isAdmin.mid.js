@@ -5,7 +5,7 @@ export default (req, res, next) => {
     const token = req.cookies.token;
     const userData = verifytoken(token);
     const { role } = userData;
-    if (role === 1) {
+    if (role === 1 || role === 2) {
       return next();
     } else {
       const error = new Error("Debes ser administrador");
