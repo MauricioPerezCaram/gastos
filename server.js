@@ -8,7 +8,6 @@ import morgan from "morgan";
 import dbConnection from "./src/utils/db.js";
 import cookieParser from "cookie-parser";
 import expressSession from "express-session";
-// import sessionFileStore from "session-file-store";
 import MongoStore from "connect-mongo";
 
 const server = express();
@@ -19,33 +18,10 @@ const ready = () => {
 };
 server.listen(PORT, ready);
 
-// const FileStore = sessionFileStore(expressSession);
-
-//middlewares
-server.use(cookieParser(process.env.SECRET_KEY));
-// server.use(
-//   expressSession({
-//     secret: process.env.SECRET_KEY,
-//     resave: true,
-//     saveUninitialized: true,
-//     store: new FileStore({
-//       path: "./src/dao/mongo/sessions",
-//       ttl: 10,
-//       retries: 5,
-//     }),
-//   })
-// );
-// server.use(
-//   expressSession({
-//     secret: process.env.SECRET_KEY,
-//     resave: true,
-//     saveUninitialized: true,
-//     cookie: { maxAge: 100000 },
-//   })
-// );
+server.use(cookieParser(process.env.SECRET));
 server.use(
   expressSession({
-    secret: process.env.SECRET_KEY,
+    secret: process.env.SECRET,
     resave: true,
     saveUninitialized: true,
     store: new MongoStore({
