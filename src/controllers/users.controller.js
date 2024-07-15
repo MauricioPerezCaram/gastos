@@ -1,19 +1,14 @@
-// import service from "../services/events.service.js";
-import { users } from "../dao/mongo/manager.mongo.js";
+import service from "../services/users.service.js";
 
 class UsersController {
-  //   constructor() {
-  //     this.service = service;
-  //   }
-
   constructor() {
-    this.model = users;
+    this.service = service;
   }
 
   create = async (req, res, next) => {
     try {
       const data = req.body;
-      const response = await this.model.create(data);
+      const response = await this.service.create(data);
       return res.success201(response);
     } catch (error) {
       return next(error);
@@ -22,7 +17,7 @@ class UsersController {
 
   read = async (req, res, next) => {
     try {
-      const all = await this.model.read({});
+      const all = await this.service.read({});
       return res.success200(all);
     } catch (error) {
       return next(error);
@@ -32,7 +27,7 @@ class UsersController {
   readOne = async (req, res, next) => {
     try {
       const { uid } = req.params;
-      const one = await this.model.readOne(uid);
+      const one = await this.service.readOne(uid);
       return res.success200(one);
     } catch (error) {
       return next(error);
@@ -43,7 +38,7 @@ class UsersController {
     try {
       const { uid } = req.params;
       const data = req.body;
-      const one = await this.model.update(uid, data);
+      const one = await this.service.update(uid, data);
       return res.success200(one);
     } catch (error) {
       return next(error);
@@ -53,7 +48,7 @@ class UsersController {
   destroy = async (req, res, next) => {
     try {
       const { uid } = req.params;
-      const one = await this.model.destroy(uid);
+      const one = await this.service.destroy(uid);
       return res.success200("Eliminado el usuario: " + one.name);
     } catch (error) {
       return next(error);
