@@ -71,6 +71,9 @@ class MongoManager {
   }
 }
 
+// export {users, dishes}
+// export default MongoManager
+
 const users = new MongoManager(User);
 const dishes = new MongoManager(Dish);
 
